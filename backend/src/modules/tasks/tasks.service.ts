@@ -16,7 +16,7 @@ export class TasksService {
         return await this.prisma.task.create({
             data: {
                 ...createTaskDto,
-                userId: userId,
+                userId: userId
             },
         });
     }
@@ -30,6 +30,11 @@ export class TasksService {
             skip: skip,
             take: size,
             orderBy: { id: 'asc' },
+            include: {
+                checkList: {
+                    orderBy: { id: 'asc'}
+                }
+            }
         })
     }
 
@@ -37,8 +42,13 @@ export class TasksService {
         const task = await this.prisma.task.findFirst({
             where: { 
                 id: taskId,
-                userId: userId 
+                userId: userId
             },
+            include: {
+                checkList: {
+                    orderBy: { id: 'asc' }
+                }
+            }
         });
 
         if (!task) {
@@ -54,7 +64,7 @@ export class TasksService {
         return await this.prisma.task.update({
             where: { id: taskId },
             data: {
-                ...updateTaskDto,
+                ...updateTaskDto
             },
         });
     }
@@ -63,7 +73,7 @@ export class TasksService {
         await this.findById(userId, taskId);
 
         return await this.prisma.task.delete({
-            where: { id: taskId },
+            where: { id: taskId }
         });
     }
     
@@ -101,7 +111,7 @@ export class TasksService {
 
         return await this.prisma.taskItem.update({
             where: { id: itemId },
-            data: updateTaskItemDto,
+            data: updateTaskItemDto
         })
     }
 
@@ -109,7 +119,7 @@ export class TasksService {
         await this.findTaskItemById(userId, itemId);
 
         return await this.prisma.taskItem.delete({
-            where: { id: itemId },
+            where: { id: itemId }
         });
     }
 

@@ -13,7 +13,7 @@ export class UsersService {
 
     async create(createUserDto: CreateUserDto): Promise<User> {
         const userExists = await this.prisma.user.findUnique({
-            where: { email: createUserDto.email },
+            where: { email: createUserDto.email }
         });
 
         if(userExists) {
@@ -25,7 +25,7 @@ export class UsersService {
         return await this.prisma.user.create({
             data: {
                 ...createUserDto,
-                password: hashedPassword,
+                password: hashedPassword
             },
         });
     }
@@ -38,13 +38,13 @@ export class UsersService {
         return await this.prisma.user.findMany({
             skip: skip,
             take: size,
-            orderBy: { id: 'asc' },
+            orderBy: { id: 'asc' }
         });
     }
 
     async findById(id: number): Promise<User> {
         const user = await this.prisma.user.findUnique({
-            where: { id },
+            where: { id }
         });
 
         if(!user) {
@@ -59,7 +59,7 @@ export class UsersService {
 
         if(updateUserDto.email) {
             const userExists = await this.prisma.user.findUnique({
-                where: { email: updateUserDto.email },
+                where: { email: updateUserDto.email }
             });
 
             if(userExists) {
@@ -75,7 +75,7 @@ export class UsersService {
 
         return await this.prisma.user.update({
             where: { id },
-            data: dataToUpDate,
+            data: dataToUpDate
         });
     }
 
@@ -83,7 +83,7 @@ export class UsersService {
         await this.findById(id);
 
         return await this.prisma.user.delete({
-            where: { id },
+            where: { id }
         });
     }
 
