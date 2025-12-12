@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { PrismaService } from "../../prisma/prisma.service";
 import { User } from "@prisma/client";
@@ -12,6 +12,14 @@ export class UsersService {
     constructor(private prisma: PrismaService) {}
 
     async create(createUserDto: CreateUserDto): Promise<User> {
+        const userExists = await this.prisma.user.findUnique({
+            where: { email: createUserDto.email },
+        });
+
+        if(userExists) {
+            throw new ConflictException('Este e-mail já está cadastrado no sistema.');
+        }
+
         const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
         return await this.prisma.user.create({
@@ -48,6 +56,16 @@ export class UsersService {
 
     async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
         await this.findById(id);
+
+        if(updateUserDto.email) {
+            const userExists = await this.prisma.user.findUnique({
+                where: { email: updateUserDto.email },
+            });
+
+            if(userExists) {
+                throw new ConflictException("O e-mail fornecido já está cadastrado no sistema.")
+            }
+        }
 
         let dataToUpDate = { ...updateUserDto };
 
