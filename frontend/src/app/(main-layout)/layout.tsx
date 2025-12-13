@@ -19,7 +19,7 @@ export default function TaskBoardLayout({
                     className="object-cover"
                 />
             
-                <div className="absolute inset-0 bg-white/60 backdrop-blur-sm" />
+                <div className="absolute inset-0 bg-white/50 backdrop-blur-sm" />
             </div>
 
             <Header />

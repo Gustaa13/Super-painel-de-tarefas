@@ -5,12 +5,8 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-    const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null;
-
-    if (userId) {
-        config.headers['x-user-id'] = userId;
-    }
-
+    config.headers['x-user-id'] = '3';
+    
     return config;
 })
 

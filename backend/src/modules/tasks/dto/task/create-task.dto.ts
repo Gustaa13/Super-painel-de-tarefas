@@ -1,5 +1,5 @@
 import { Priority } from "@prisma/client";
-import { IsEnum, IsNotEmpty, IsOptional, IsString} from "class-validator";
+import { IsBoolean, IsEnum, IsNotEmpty, IsOptional, IsString} from "class-validator";
 
 export class CreateTaskDto {
     @IsString()
@@ -9,4 +9,8 @@ export class CreateTaskDto {
     @IsEnum(Priority, { message: "Prioridade inválida" })
     @IsOptional()
     priority?: Priority;
+
+    @IsBoolean()
+    @IsOptional()
+    completed?: boolean;
 }
