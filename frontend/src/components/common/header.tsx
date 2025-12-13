@@ -24,7 +24,8 @@ export function Header() {
         
         <div className="flex items-center gap-10">
           <h1 className="text-xl font-bold text-slate-300">
-            <span className="text-slate-500">SUPER</span>TASKS
+            <span className="text-slate-500 hidden md:block translate-y-1 -translate-x-2">SUPER</span>
+            <span className="block -translate-y-1 translate-x-2">TASKS</span>
           </h1>
           <nav className="flex gap-2 items-center">
             <Link

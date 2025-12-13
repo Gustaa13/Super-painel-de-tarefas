@@ -5,13 +5,14 @@ import {
   UpdateTaskDto, 
   CreateTaskItemDto, 
   UpdateTaskItemDto,
-  PaginationDto
+  PaginatedResult,
+  PaginationTaskDto
 } from "@/types";
 
 class TasksService {
  
-  async findAll(pagination?: PaginationDto): Promise<Task[]> {
-    const response = await api.get<Task[]>("/tasks", { params: pagination });
+  async findAll(pagination?: PaginationTaskDto): Promise<PaginatedResult<Task>> {
+    const response = await api.get<PaginatedResult<Task>>("/tasks", { params: pagination });
     return response.data;
   }
 

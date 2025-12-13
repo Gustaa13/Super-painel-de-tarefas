@@ -17,9 +17,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, MoreVertical, Plus, Trash, Edit } from "lucide-react";
+import { ChevronDown, MoreVertical, Plus, Trash, Edit, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { tasksService } from "@/services/tasks-service";
+import { Input } from "../ui/input";
+import { DeleteTaskAlert } from "./delete-task-alert";
+import { EditTaskDialog } from "./edit-task-dialog";
 
 interface TaskCardProps {
   task: Task;
@@ -37,142 +40,264 @@ const getPriorityColor = (priority: Priority) => {
 };
 
 export function TaskCard({ task, onRemove }: TaskCardProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isCollapseOpen, setIsCollapseOpen] = useState(false);
   const [isCompleted, setIsCompleted] = useState(task.completed);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingToggleCompleteRequest, setIsLoadingToggleCompleteRequest] = useState(false);
 
-  const handleToggleComplete = async (checked: boolean) => {
+  const [taskItems, setTaskItems] = useState(task.checkList);
+
+  const [isAddingItem, setIsAddingItem] = useState(false);
+  const [newItemText, setNewItemText] = useState("");
+  const [isCreatingItem, setIsCreatingItem] = useState(false);
+
+  const [currentTask, setCurrentTask] = useState(task); 
+  
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleAddItem = async () => {
+    if (!newItemText.trim()) return;
+
+    try {
+      setIsCreatingItem(true);
+      
+      const createdItem = await tasksService.createItem(task.id, { 
+        description: newItemText 
+      });
+
+      setTaskItems([...taskItems, createdItem]);
+      
+      setNewItemText("");
+      setIsAddingItem(false);
+
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao adicionar item.");
+    } finally {
+      setIsCreatingItem(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleAddItem();
+    if (e.key === "Escape") {
+        setIsAddingItem(false);
+        setNewItemText("");
+    }
+  };
+
+  const toggleComplete = async (checked: boolean) => {
     const previousValue = isCompleted;
     setIsCompleted(checked);
 
     try {
-        setIsLoading(true);
+        setIsLoadingToggleCompleteRequest(true);
 
         await tasksService.update(task.id, {
             completed: checked,
         });
+
+        toggleTaskItemsChecked(checked);
     } catch(error) {
         setIsCompleted(previousValue);
-        alert("Erro ao completar tarefa");
+        alert("Erro ao completar tarefa.");
     } finally {
-      setIsLoading(false);
+      setIsLoadingToggleCompleteRequest(false);
     }
   }
 
-  const handleRemoveTask = async () => {
-    try {
-        await tasksService.delete(task.id);
+  const toggleTaskItemsChecked = (checked: boolean) => {
+    setTaskItems((list) => list.map((item) => ({ ...item, check: checked })));
+  }
 
-        onRemove();
+  const confirmDelete = async () => {
+    try {
+        setIsDeleting(true);
+
+        await tasksService.delete(currentTask.id);
+
+        onRemove(); 
     } catch(error) {
-        alert("Erro ao remover tarefa")
+        alert("Erro ao remover tarefa");
+        setIsDeleting(false); 
+        setShowDeleteAlert(false);
     }
+  };
+
+  const handleRemoveFromtaskItemsList = (itemId: number) => {
+    setTaskItems((list) => list.filter((item) => item.id !== itemId));
   }
 
   return (
-    <Collapsible
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        className={cn(
-            "group rounded-xl border bg-white/90 backdrop-blur-sm shadow-sm transition-all hover:shadow-md",
-            isOpen && "ring-1 ring-primary/20"
-        )}
-    >
+    <>
+        <Collapsible
+            open={isCollapseOpen}
+            onOpenChange={setIsCollapseOpen}
+            className={cn(
+                "group rounded-xl border bg-white/90 backdrop-blur-sm shadow-sm transition-all hover:shadow-md",
+                isCollapseOpen && "ring-1 ring-primary/20"
+            )}
+        >
 
-        <CollapsibleTrigger asChild>
-            <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50/50 transition-colors rounded-t-xl">
-            
-                <div className="flex items-center gap-4">
-                    <div onClick={(e) => e.stopPropagation()}>
-                        <Checkbox 
-                            checked={isCompleted} 
-                            onCheckedChange={(value) => handleToggleComplete(value as boolean)}
-                            disabled={isLoading}
-                            className="h-5 w-5" 
-                        />
-                    </div>
-
-                    <div className="flex flex-col text-left"> 
-                        <span
-                            className={cn(
-                            "font-semibold text-slate-800",
-                            isCompleted && "line-through text-muted-foreground"
-                            )}
-                        >
-                            {task.title}
-                        </span>
-                        <div className="flex items-center gap-2 mt-1">
-                            <Badge
-                            className={cn(
-                                "text-[10px] px-2 py-0",
-                                getPriorityColor(task.priority)
-                            )}
-                            >
-                                {task.priority}
-                            </Badge>
-                            <span className="text-xs text-muted-foreground">
-                                {task.checkList.filter((i) => i.check).length}/
-                                {task.checkList.length} itens
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="sm" className="w-9 p-0 pointer-events-none"> 
-                        <ChevronDown
-                        className={cn(
-                            "h-4 w-4 transition-transform",
-                            isOpen && "rotate-180"
-                        )}
-                        />
-                        <span className="sr-only">Toggle</span>
-                    </Button>
-                    {!isCompleted && (
+            <CollapsibleTrigger asChild>
+                <div className="flex items-center justify-between p-4 cursor-pointer hover:bg-slate-50/50 transition-colors rounded-t-xl">
+                
+                    <div className="flex items-center gap-4">
                         <div onClick={(e) => e.stopPropagation()}>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="w-9 p-0 hover:bg-slate-200">
-                                    <MoreVertical className="h-4 w-4" />
-                                </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                    <Edit className="mr-2 h-4 w-4" /> Editar
-                                </DropdownMenuItem>
-                                <DropdownMenuItem 
-                                    className="text-red-600 focus:text-red-600" 
-                                    onSelect={(e) => {
-                                        e.preventDefault();
-                                        handleRemoveTask();
-                                    }}
-                                >
-                                    <Trash className="mr-2 h-4 w-4" /> Excluir
-                                </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            <Checkbox 
+                                checked={isCompleted} 
+                                onCheckedChange={(value) => toggleComplete(value as boolean)}
+                                disabled={isLoadingToggleCompleteRequest}
+                                className="h-5 w-5" 
+                            />
                         </div>
-                    )} 
+
+                        <div className="flex flex-col text-left"> 
+                            <span
+                                className={cn(
+                                    "font-semibold text-slate-800",
+                                    isCompleted && "line-through text-muted-foreground"
+                                )}
+                            >
+                                {currentTask.title}
+                            </span>
+                            <div className="flex taskItems-center gap-2 mt-1">
+                                <Badge
+                                className={cn(
+                                    "text-[10px] px-2 py-0",
+                                    getPriorityColor(currentTask.priority)
+                                )}
+                                >
+                                    {currentTask.priority}
+                                </Badge>
+                                <span className="text-xs text-muted-foreground">
+                                    {taskItems.filter((i) => i.check).length}/
+                                    {taskItems.length} itens
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <Button variant="ghost" size="sm" className="w-9 p-0 pointer-events-none"> 
+                            <ChevronDown
+                            className={cn(
+                                "h-4 w-4 transition-transform",
+                                isCollapseOpen && "rotate-180"
+                            )}
+                            />
+                            <span className="sr-only">Toggle</span>
+                        </Button>
+                        {!isCompleted && (
+                            <div onClick={(e) => e.stopPropagation()}>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="sm" className="w-9 p-0 hover:bg-slate-200">
+                                            <MoreVertical className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem 
+                                            onSelect={(e) => {
+                                                e.preventDefault(); 
+                                                setShowEditDialog(true);
+                                            }}
+                                        >
+                                            <Edit className="mr-2 h-4 w-4" /> Editar
+                                        </DropdownMenuItem>
+
+                                        <DropdownMenuItem 
+                                            className="text-red-600 focus:text-red-600" 
+                                            onSelect={(e) => {
+                                                e.preventDefault(); 
+                                                setShowDeleteAlert(true); // Abre o alerta
+                                            }}
+                                        >
+                                            <Trash className="mr-2 h-4 w-4" /> Excluir
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        )} 
+                    </div>
                 </div>
-            </div>
-        </CollapsibleTrigger>
+            </CollapsibleTrigger>
 
-        <CollapsibleContent className="border-t bg-slate-50/50 px-4 py-2">
-            <div className="space-y-1">
-                {task.checkList.map((item) => (
-                    <TaskItem key={item.id} item={item} />
-                ))}
-            </div>
+            <CollapsibleContent className="border-t bg-slate-50/50 px-4 py-3">
+                <div className="space-y-1">
+                    {taskItems.map((item) => (
+                        <TaskItem key={item.id} item={item} onRemove={() => handleRemoveFromtaskItemsList(item.id)} />
+                    ))}
+                </div>
 
-            <Button
-            variant="ghost"
-            size="sm"
-            className="mt-2 w-full justify-start text-muted-foreground hover:text-primary"
-            >
-                <Plus className="mr-2 h-4 w-4" />
-                Adicionar item
-            </Button>
-        </CollapsibleContent>
-    </Collapsible>
+                {!isCompleted && (
+                    <div className="mt-2">
+                        {isAddingItem ? (
+
+                            <div className="flex items-center gap-2 animate-in fade-in zoom-in duration-200">
+                                <Input
+                                    value={newItemText}
+                                    onChange={(e) => setNewItemText(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                    placeholder="Descreva o item..."
+                                    className="h-8 text-sm bg-white"
+                                    autoFocus 
+                                    disabled={isCreatingItem}
+                                />
+                                
+                                <Button 
+                                    size="icon" 
+                                    variant="ghost" 
+                                    className="h-8 w-8 hover:bg-green-100 text-green-600"
+                                    onClick={handleAddItem}
+                                    disabled={isCreatingItem}
+                                >
+                                    <Check className="h-4 w-4" />
+                                </Button>
+
+                                <Button 
+                                    size="icon" 
+                                    variant="ghost" 
+                                    className="h-8 w-8 hover:bg-red-100 text-red-600"
+                                    onClick={() => setIsAddingItem(false)}
+                                    disabled={isCreatingItem}
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            </div>
+
+                        ) : (
+
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setIsAddingItem(true)} 
+                                className="w-full justify-start text-muted-foreground hover:text-primary transition-colors"
+                            >
+                                <Plus className="mr-2 h-4 w-4" />
+                                Adicionar item
+                            </Button>
+
+                        )}
+                    </div>
+                )}
+            </CollapsibleContent>
+        </Collapsible>
+
+        <DeleteTaskAlert 
+            open={showDeleteAlert} 
+            onOpenChange={setShowDeleteAlert}
+            onConfirm={confirmDelete}
+            isDeleting={isDeleting}
+        />
+
+        <EditTaskDialog 
+            open={showEditDialog}
+            onOpenChange={setShowEditDialog}
+            task={currentTask}
+            onSuccess={(updatedTask) => setCurrentTask(updatedTask)}
+        />
+    </>
   );
 }

@@ -2,10 +2,12 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { PaginationDto } from "../../common/dto/pagination.dto";
 import { CreateTaskDto } from "./dto/task/create-task.dto";
 import { PrismaService } from "../../prisma/prisma.service";
-import { Task, TaskItem } from "@prisma/client";
+import { Prisma, Task, TaskItem } from "@prisma/client";
 import { CreateTaskItemDto } from "./dto/task-item/create-task-item.dto";
 import { UpdateTaskDto } from "./dto/task/update-task.dto";
 import { UpdateTaskItemDto } from "./dto/task-item/update-task-item.dto";
+import { PaginatedOutput } from "../../common/paginatedOutput";
+import { PaginationTaskDto, SortOrder, StatusFilter } from "./dto/task/pagination-task.dto";
 
 @Injectable()
 export class TasksService {
@@ -21,21 +23,58 @@ export class TasksService {
         });
     }
 
-    async findAll(userId: number, paginationDto: PaginationDto): Promise<Task[]> {
-        const { page = 1, size = 10 } = paginationDto;
+    async findAll(userId: number, paginationDto: PaginationTaskDto): Promise<PaginatedOutput<Task>> {
+        const page = Number(paginationDto.page) || 1;
+        const size = Number(paginationDto.size) || 10;
         const skip = (page - 1) * size;
+        
+        const idOrder: Prisma.SortOrder = paginationDto.orderBy?.toUpperCase() === 'ASC' ? 'asc' : 'desc';
 
-        return await this.prisma.task.findMany({
-            where: {userId: userId},
-            skip: skip,
-            take: size,
-            orderBy: { id: 'asc' },
-            include: {
-                checkList: {
-                    orderBy: { id: 'asc'}
+        const where: Prisma.TaskWhereInput = {
+            userId: userId, 
+        };
+
+        if (paginationDto.status === 'COMPLETED') {
+            where.completed = true;
+        } else if (paginationDto.status === 'PENDING') {
+            where.completed = false;
+        }
+
+        const orderBy: Prisma.TaskOrderByWithRelationInput[] = [];
+
+        if (paginationDto.sortByPriority) {
+            orderBy.push({ priority: 'asc' }); 
+        }
+
+        orderBy.push({ id: idOrder });
+
+        const [total, tasks] = await Promise.all([
+            this.prisma.task.count({ where }),
+            
+            this.prisma.task.findMany({
+                where,
+                skip,
+                take: size,
+                orderBy, 
+                include: {
+                    checkList: {
+                        orderBy: { id: 'asc' }
+                    }
                 }
+            })
+        ]);
+
+        const lastPage = Math.ceil(total / size);
+
+        return {
+            data: tasks,
+            meta: {
+                total,
+                lastPage,
+                page,
+                size
             }
-        })
+        };
     }
 
     async findById(userId: number, taskId: number): Promise<Task> {
@@ -61,11 +100,29 @@ export class TasksService {
     async update(userId: number, taskId: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
         await this.findById(userId, taskId);
 
-        return await this.prisma.task.update({
+        if (updateTaskDto.completed !== undefined) {
+            
+            return await this.prisma.$transaction(async (tx) => {
+                
+                const task = await tx.task.update({
+                    where: { id: taskId },
+                    data: updateTaskDto,
+                });
+
+                await tx.taskItem.updateMany({
+                    where: { taskId: taskId },
+                    data: { 
+                        check: updateTaskDto.completed 
+                    }
+                });
+
+                return task;
+            });
+        }
+
+        return this.prisma.task.update({
             where: { id: taskId },
-            data: {
-                ...updateTaskDto
-            },
+            data: updateTaskDto,
         });
     }
 

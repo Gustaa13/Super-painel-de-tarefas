@@ -8,6 +8,7 @@ import { TaskItemResponseDto } from "./dto/task-item/task-item-response.dto";
 import { TaskResponseDto } from "./dto/task/task-response.dto";
 import { UpdateTaskDto } from "./dto/task/update-task.dto";
 import { UpdateTaskItemDto } from "./dto/task-item/update-task-item.dto";
+import { PaginationTaskDto } from "./dto/task/pagination-task.dto";
 
 @Controller('tasks')
 export class TasksController {
@@ -40,12 +41,15 @@ export class TasksController {
     @Get()
     async findAll(
         @Headers('x-user-id') userIdHeader: string,
-        @Query() paginationDto: PaginationDto
+        @Query() paginationDto: PaginationTaskDto
     ) {
         const userId = await this.getUserIdFromHeader(userIdHeader);
-        const tasks = await this.tasksService.findAll(userId, paginationDto);
+        const result = await this.tasksService.findAll(userId, paginationDto);
 
-        return tasks.map(task => new TaskResponseDto(task));
+        return {
+            data: result.data.map(task => new TaskResponseDto(task)),
+            meta: result.meta
+        };
     }
 
     @Get(':id')
