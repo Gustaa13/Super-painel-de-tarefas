@@ -3,6 +3,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import type { Response } from 'express';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { UserResponseDto } from '../users/dto/user-response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -63,5 +65,13 @@ export class AuthController {
         message: 'Cadastro realizado com sucesso', 
         user: result
     };
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('me')
+  async getProfile(@CurrentUser() currentUser: any) {
+    const user = await this.authService.getProfile(currentUser.userId);
+
+    return new UserResponseDto(user);
   }
 }

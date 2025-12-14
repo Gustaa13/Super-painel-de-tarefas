@@ -68,4 +68,8 @@ export class AuthService {
             result 
         }
     }
+
+    async getProfile(userId: number): Promise<User> {
+        return await this.usersService.findById(userId);
+    }
 }

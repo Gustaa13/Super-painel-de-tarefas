@@ -25,11 +25,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3001/users",
+							"raw": "{{baseURL}}/users",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3001",
 							"path": [
 								"users"
 							]
@@ -43,11 +42,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3001/users",
+							"raw": "{{baseURL}}/users",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3001",
 							"path": [
 								"users"
 							]
@@ -61,11 +59,10 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3001/users/1",
+							"raw": "{{baseURL}}/users/1",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3001",
 							"path": [
 								"users",
 								"1"
@@ -89,11 +86,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3001/users/1",
+							"raw": "{{baseURL}}/users/1",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3001",
 							"path": [
 								"users",
 								"1"
@@ -108,11 +104,10 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:3001/users/1",
+							"raw": "{{baseURL}}/users/1",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3001",
 							"path": [
 								"users",
 								"1"
@@ -133,13 +128,7 @@
 							"name": "create",
 							"request": {
 								"method": "POST",
-								"header": [
-									{
-										"key": "x-user-id",
-										"value": "3",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"description\": \"fazer apresentação de slides\",\r\n    \"check\": false\r\n}",
@@ -150,11 +139,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:3001/tasks/1/items",
+									"raw": "{{baseURL}}/tasks/1/items",
 									"host": [
-										"localhost"
+										"{{baseURL}}"
 									],
-									"port": "3001",
 									"path": [
 										"tasks",
 										"1",
@@ -168,13 +156,7 @@
 							"name": "update",
 							"request": {
 								"method": "PATCH",
-								"header": [
-									{
-										"key": "x-user-id",
-										"value": "3",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": "{\r\n    \"check\": true\r\n}",
@@ -185,11 +167,10 @@
 									}
 								},
 								"url": {
-									"raw": "localhost:3001/tasks/items/1",
+									"raw": "{{baseURL}}/tasks/items/1",
 									"host": [
-										"localhost"
+										"{{baseURL}}"
 									],
-									"port": "3001",
 									"path": [
 										"tasks",
 										"items",
@@ -203,23 +184,16 @@
 							"name": "remove",
 							"request": {
 								"method": "DELETE",
-								"header": [
-									{
-										"key": "x-user-id",
-										"value": "3",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
 									"raw": ""
 								},
 								"url": {
-									"raw": "localhost:3001/tasks/items/2",
+									"raw": "{{baseURL}}/tasks/items/2",
 									"host": [
-										"localhost"
+										"{{baseURL}}"
 									],
-									"port": "3001",
 									"path": [
 										"tasks",
 										"items",
@@ -235,13 +209,7 @@
 					"name": "create",
 					"request": {
 						"method": "POST",
-						"header": [
-							{
-								"key": "x-user-id",
-								"value": "3",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"title\": \"Fazer trabalho de Gestão de Projetos\",\r\n    \"priority\": \"HIGH\"\r\n}",
@@ -252,11 +220,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3001/tasks",
+							"raw": "{{baseURL}}/tasks",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3001",
 							"path": [
 								"tasks"
 							]
@@ -271,25 +238,28 @@
 					},
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "x-user-id",
-								"value": "3",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
 						"url": {
-							"raw": "localhost:3001/tasks",
+							"raw": "{{baseURL}}/tasks?page=1&size=15",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3001",
 							"path": [
 								"tasks"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "15"
+								}
 							]
 						}
 					},
@@ -299,19 +269,12 @@
 					"name": "findById",
 					"request": {
 						"method": "GET",
-						"header": [
-							{
-								"key": "x-user-id",
-								"value": "3",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"url": {
-							"raw": "localhost:3001/tasks/1",
+							"raw": "{{baseURL}}/tasks/1",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3001",
 							"path": [
 								"tasks",
 								"1"
@@ -324,13 +287,7 @@
 					"name": "update",
 					"request": {
 						"method": "PATCH",
-						"header": [
-							{
-								"key": "x-user-id",
-								"value": "3",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"priority\": \"URGENT\"\r\n}",
@@ -341,11 +298,10 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3001/tasks/1",
+							"raw": "{{baseURL}}/tasks/1",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3001",
 							"path": [
 								"tasks",
 								"1"
@@ -358,23 +314,16 @@
 					"name": "remove",
 					"request": {
 						"method": "DELETE",
-						"header": [
-							{
-								"key": "x-user-id",
-								"value": "3",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": ""
 						},
 						"url": {
-							"raw": "localhost:3001/tasks/2",
+							"raw": "{{baseURL}}/tasks/2",
 							"host": [
-								"localhost"
+								"{{baseURL}}"
 							],
-							"port": "3001",
 							"path": [
 								"tasks",
 								"2"
@@ -384,6 +333,132 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "/auth",
+			"item": [
+				{
+					"name": "/login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"gustavo2@gmail.com\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/google",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/auth/google",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"google"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/auth/logout",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/google/callback",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"gustavo2@gmail.com\",\r\n    \"password\": \"123456\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/google/callback",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"google",
+								"callback"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/me",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/profile",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "",
+			"type": "default"
 		}
 	]
 }

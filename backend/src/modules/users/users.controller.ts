@@ -5,6 +5,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UsersService } from "./users.service";
 import { UserResponseDto } from "./dto/user-response.dto";
 import { AuthGuard } from "@nestjs/passport";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
 
 @Controller('users')
 @UseGuards(AuthGuard('jwt'))
@@ -33,12 +34,13 @@ export class UsersController {
         return new UserResponseDto(user);
     }
 
-    @Patch(':id')
+    @Patch()
     async update(
-        @Param('id', ParseIntPipe) id: number,
+        @CurrentUser() user: any,
         @Body() updateUserDto: UpdateUserDto
     ) {
-        const updatedUser = await this.usersService.update(id, updateUserDto);
+        const userId = user.userId;
+        const updatedUser = await this.usersService.update(userId, updateUserDto);
 
         return new UserResponseDto(updatedUser);
     }

@@ -1,13 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:3001'
+    baseURL: 'http://localhost:3001',
+    withCredentials: true
 });
-
-api.interceptors.request.use((config) => {
-    config.headers['x-user-id'] = '3';
-    
-    return config;
-})
 
 export default api;

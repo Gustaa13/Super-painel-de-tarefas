@@ -12,11 +12,53 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { authService } from "@/services/auth-service";
+import { User } from "@/types";
+import { EditProfileSheet } from "../profile/edit-profile-sheet";
 
 export function Header() {
   const pathname = usePathname();
-  const user = { name: "João Paulo", initials: "JP" };
+  const router = useRouter();
+  const [profile, setProfile] = useState<User>();
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+
+  useEffect(() => {
+    recoverProfile();
+  }, []);
+
+  const recoverProfile = async () => {
+    try {
+      const user = await authService.getProfile();
+
+      setProfile(user);
+    } catch(error: any) {
+      alert("Erro ao recuperar perfil de usuário.");
+    }
+  }
+
+  const logout = async () => {
+    try {
+      await authService.logout();
+
+      router.replace("/login")
+    } catch(erro: any) {
+      alert("Erro ao sair da sessão.");
+    }
+  }
+
+  const getInitials = (name: string = "") => {
+    if (!name) return "U"; 
+
+    const parts = name.trim().split(" ");
+    
+    const firstInitial = parts[0]?.[0] || "";
+    
+    const secondInitial = parts[1]?.[0] || "";
+
+    return (firstInitial + secondInitial).toUpperCase();
+  };
 
   return (
     <header className="border-b bg-white">
@@ -40,30 +82,39 @@ export function Header() {
               Painel de Tarefas
             </Link>
             <Link
-              href="/test"
+              href="/dashboard"
               className={cn(
                 "text-sm font-semibold rounded-md py-2 px-3 hover:bg-slate-50",
-                pathname === "/test"
+                pathname === "/dashboard"
                   ? "text-slate-800"
                   : "text-muted-foreground"
               )}
             >
-              Teste
+              Dashboard
             </Link>
           </nav>
         </div>
 
         <div className="flex items-center gap-4">
             <span className="text-sm font-medium text-slate-700 hidden md:block">
-                {user.name}
+                {profile?.name || 'Usuário'}
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="relative h-10 w-10 rounded-full cursor-pointer">
                     <Avatar>
-                        <AvatarFallback className="bg-slate-600 text-white">
-                            {user.initials}
-                        </AvatarFallback>
+
+                      {profile?.photoUrl && (
+                        <AvatarImage 
+                          src={profile?.photoUrl} 
+                          alt={profile?.name || "Avatar do usuário"} 
+                          className="object-cover"
+                        />
+                      )}
+                      
+                      <AvatarFallback className="bg-slate-600 text-white">
+                        {getInitials(profile?.name)}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
               </DropdownMenuTrigger>
@@ -71,23 +122,38 @@ export function Header() {
               <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{user.name}</p>
+                        <p className="text-sm font-medium leading-none">{profile?.name || 'Usuário'}</p>
                         <p className="text-xs leading-none text-muted-foreground">
-                        joao@exemplo.com
+                          {profile?.email || 'usuario@mail.com'}
                         </p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="cursor-pointer">
-                      Editar Perfil
+                  <DropdownMenuItem 
+                    className="cursor-pointer"
+                    onSelect={(e) => {
+                      e.preventDefault()
+                      setIsEditProfileOpen(true)
+                    }}
+                  >
+                    Editar Perfil
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-red-600 focus:text-red-600 cursor-pointer">
+                  <DropdownMenuItem onClick={logout} className="text-red-600 focus:text-red-600 cursor-pointer">
                       Sair
                   </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
         </div>
       </div>
+
+      <EditProfileSheet 
+        profile={profile}
+        open={isEditProfileOpen}
+        onOpenChange={setIsEditProfileOpen}
+        onSuccess={(updatedProfile) => {
+          setProfile(updatedProfile)
+        }}
+      />
     </header>
   );
 }

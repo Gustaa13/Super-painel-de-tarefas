@@ -2,6 +2,12 @@ export interface User {
   id: number;
   name: string;
   email: string;
+  photoUrl?: string;
+}
+
+export interface UpdateUserDto {
+  name: string;
+  photoUrl?: string;
 }
 
 export interface Task {
