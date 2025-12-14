@@ -38,7 +38,7 @@ export function CreateTaskDialog() {
 
     return(
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
+            <DialogTrigger asChild className="cursor-pointer">
                 <Button>
                     <PlusCircle className="h-4 w-4" />
                     Nova Tarefa
@@ -72,18 +72,18 @@ export function CreateTaskDialog() {
                                 value={priority}
                                 onValueChange={(value) => setPriority(value as Priority)}
                             >
-                                <SelectTrigger>
+                                <SelectTrigger className="cursor-pointer">
                                     <SelectValue placeholder="Selecione" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="LOW">Baixa</SelectItem>
-                                    <SelectItem value="MEDIUM">Média</SelectItem>
-                                    <SelectItem value="HIGH">Alta</SelectItem>
-                                    <SelectItem value="URGENT">Urgente</SelectItem>
+                                    <SelectItem className="cursor-pointer" value="LOW">Baixa</SelectItem>
+                                    <SelectItem className="cursor-pointer" value="MEDIUM">Média</SelectItem>
+                                    <SelectItem className="cursor-pointer" value="HIGH">Alta</SelectItem>
+                                    <SelectItem className="cursor-pointer" value="URGENT">Urgente</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
-                        <Button type="submit" className="px-6">
+                        <Button type="submit" className="px-6 cursor-pointer">
                             Criar
                         </Button>
                     </div>

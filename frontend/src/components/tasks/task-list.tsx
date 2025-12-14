@@ -190,7 +190,7 @@ export function TaskList() {
         <div className="flex justify-center sm:justify-end pt-3 sm:pr-3">
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 cursor-pointer">
                 <ListFilter className="h-4 w-4" />
                 Filtros e Organização
               </Button>
@@ -211,12 +211,12 @@ export function TaskList() {
                       value={sortOrder} 
                       onValueChange={(val) => handleFilterChange(() => setSortOrder(val as SortOrder))}
                     >
-                      <SelectTrigger id="sort" className="col-span-2 h-8">
+                      <SelectTrigger id="sort" className="col-span-2 h-8 cursor-pointer">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="DESC">Recente</SelectItem>
-                        <SelectItem value="ASC">Antigo</SelectItem>
+                        <SelectItem className="cursor-pointer" value="DESC">Recente</SelectItem>
+                        <SelectItem className="cursor-pointer" value="ASC">Antigo</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -227,13 +227,13 @@ export function TaskList() {
                       value={statusFilter} 
                       onValueChange={(val) => handleFilterChange(() => setStatusFilter(val as StatusFilter))}
                     >
-                      <SelectTrigger id="status" className="col-span-2 h-8">
+                      <SelectTrigger id="status" className="col-span-2 h-8 cursor-pointer">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ALL">Todos</SelectItem>
-                        <SelectItem value="COMPLETED">Concluídos</SelectItem>
-                        <SelectItem value="PENDING">Não Concluídos</SelectItem>
+                        <SelectItem className="cursor-pointer" value="ALL">Todos</SelectItem>
+                        <SelectItem className="cursor-pointer" value="COMPLETED">Concluídos</SelectItem>
+                        <SelectItem className="cursor-pointer" value="PENDING">Não Concluídos</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -247,6 +247,7 @@ export function TaskList() {
                       id="priority-mode" 
                       checked={prioritySort}
                       onCheckedChange={(val) => handleFilterChange(() => setPrioritySort(val))}
+                      className="cursor-pointer"
                     />
                   </div>
                 </div>

@@ -147,7 +147,7 @@ export function TaskItem({ item, onRemove }: TaskItemProps) {
             className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 hover:bg-red-50"
             onClick={(e) => {
               e.stopPropagation();
-              handleRemoveItem;
+              handleRemoveItem();
             }}
           >
             <Trash2 className="h-3 w-3" />

@@ -193,12 +193,13 @@ export function TaskCard({ task, onRemove }: TaskCardProps) {
                             <div onClick={(e) => e.stopPropagation()}>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" size="sm" className="w-9 p-0 hover:bg-slate-200">
+                                        <Button variant="ghost" size="sm" className="w-9 p-0 hover:bg-slate-200 cursor-pointer">
                                             <MoreVertical className="h-4 w-4" />
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuItem 
+                                            className="cursor-pointer"
                                             onSelect={(e) => {
                                                 e.preventDefault(); 
                                                 setShowEditDialog(true);
@@ -208,13 +209,13 @@ export function TaskCard({ task, onRemove }: TaskCardProps) {
                                         </DropdownMenuItem>
 
                                         <DropdownMenuItem 
-                                            className="text-red-600 focus:text-red-600" 
+                                            className="text-red-600 focus:text-red-600 cursor-pointer" 
                                             onSelect={(e) => {
                                                 e.preventDefault(); 
                                                 setShowDeleteAlert(true); // Abre o alerta
                                             }}
                                         >
-                                            <Trash className="mr-2 h-4 w-4" /> Excluir
+                                            <Trash className="mr-2 h-4 w-4 text-red-600" /> Excluir
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
@@ -249,7 +250,7 @@ export function TaskCard({ task, onRemove }: TaskCardProps) {
                                 <Button 
                                     size="icon" 
                                     variant="ghost" 
-                                    className="h-8 w-8 hover:bg-green-100 text-green-600"
+                                    className="h-8 w-8 hover:bg-green-100 text-green-600 cursor-pointer"
                                     onClick={handleAddItem}
                                     disabled={isCreatingItem}
                                 >
@@ -259,7 +260,7 @@ export function TaskCard({ task, onRemove }: TaskCardProps) {
                                 <Button 
                                     size="icon" 
                                     variant="ghost" 
-                                    className="h-8 w-8 hover:bg-red-100 text-red-600"
+                                    className="h-8 w-8 hover:bg-red-100 text-red-600 cursor-pointer"
                                     onClick={() => setIsAddingItem(false)}
                                     disabled={isCreatingItem}
                                 >
@@ -273,7 +274,7 @@ export function TaskCard({ task, onRemove }: TaskCardProps) {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => setIsAddingItem(true)} 
-                                className="w-full justify-start text-muted-foreground hover:text-primary transition-colors"
+                                className="w-full justify-start text-muted-foreground hover:text-primary transition-colors cursor-pointer"
                             >
                                 <Plus className="mr-2 h-4 w-4" />
                                 Adicionar item

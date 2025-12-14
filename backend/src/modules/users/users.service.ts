@@ -20,7 +20,11 @@ export class UsersService {
             throw new ConflictException('Este e-mail já está cadastrado no sistema.');
         }
 
-        const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+        let hashedPassword: string | null = null;
+
+        if(createUserDto.password) {
+            hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+        }
 
         return await this.prisma.user.create({
             data: {
@@ -84,6 +88,12 @@ export class UsersService {
 
         return await this.prisma.user.delete({
             where: { id }
+        });
+    }
+
+    async findByEmail(email: string): Promise<User | null> {
+        return await this.prisma.user.findUnique({
+            where: {email: email}
         });
     }
 

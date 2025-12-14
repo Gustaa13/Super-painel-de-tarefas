@@ -1,11 +1,13 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { PaginationDto } from "../../common/dto/pagination.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UsersService } from "./users.service";
 import { UserResponseDto } from "./dto/user-response.dto";
+import { AuthGuard } from "@nestjs/passport";
 
 @Controller('users')
+@UseGuards(AuthGuard('jwt'))
 export class UsersController {
 
     constructor(private readonly usersService: UsersService) {}

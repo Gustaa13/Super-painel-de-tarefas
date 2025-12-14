@@ -59,7 +59,7 @@ export function Header() {
             </span>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="relative h-10 w-10 rounded-full">
+                  <Button variant="outline" className="relative h-10 w-10 rounded-full cursor-pointer">
                     <Avatar>
                         <AvatarFallback className="bg-slate-600 text-white">
                             {user.initials}
@@ -78,10 +78,10 @@ export function Header() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                       Editar Perfil
                   </DropdownMenuItem>
-                  <DropdownMenuItem className="text-red-600 focus:text-red-600">
+                  <DropdownMenuItem className="text-red-600 focus:text-red-600 cursor-pointer">
                       Sair
                   </DropdownMenuItem>
               </DropdownMenuContent>

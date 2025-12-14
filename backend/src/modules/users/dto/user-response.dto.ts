@@ -12,6 +12,9 @@ export class UserResponseDto {
     @Expose()
     email: string;
 
+    @Expose()
+    photoUrl?: string;
+
     constructor(user: Partial<User>) {
         Object.assign(this, user);
     }

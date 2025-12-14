@@ -75,22 +75,22 @@ export function EditTaskDialog({ task, open, onOpenChange, onSuccess }: EditTask
                 value={priority} 
                 onValueChange={(val) => setPriority(val as Priority)}
             >
-              <SelectTrigger id="edit-priority">
+              <SelectTrigger id="edit-priority" className="cursor-pointer">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="LOW">Baixa</SelectItem>
-                <SelectItem value="MEDIUM">Média</SelectItem>
-                <SelectItem value="HIGH">Alta</SelectItem>
-                <SelectItem value="URGENT">Urgente</SelectItem>
+                <SelectItem className="cursor-pointer" value="LOW">Baixa</SelectItem>
+                <SelectItem className="cursor-pointer" value="MEDIUM">Média</SelectItem>
+                <SelectItem className="cursor-pointer" value="HIGH">Alta</SelectItem>
+                <SelectItem className="cursor-pointer" value="URGENT">Urgente</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <DialogFooter>
-             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="cursor-pointer">
                 Cancelar
              </Button>
-             <Button type="submit" disabled={isSaving}>
+             <Button type="submit" disabled={isSaving} className="cursor-pointer">
                 {isSaving ? "Salvando..." : "Salvar Alterações"}
              </Button>
           </DialogFooter>
